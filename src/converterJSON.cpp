@@ -103,24 +103,26 @@ void ConverterJSON::putAnswers(vector<vector<pair<int, float>>> myAnswers) const
     for (int i = 0; i < myAnswers.size(); i++)
     {
         request.clear();
+        string requestName = "request00" + to_string(i + 1);
         if (!myAnswers[i].empty())
         {
-            relevance.clear();
+            relevance = json::array();
             if (myAnswers[i].size() > limit)
             {
                myAnswers[i].resize(limit);
             }
-            request["request00" + to_string(i + 1)]["result"] = "true";
+            request[requestName]["result"] = "true";
             for (auto& element : myAnswers[i])
             {
                 text["doc_id"] = element.first;
                 text["rank"] = element.second;
-                request["request00" + to_string(i + 1)]["relevance"].push_back(text);
+                relevance.push_back(text);
+                request[requestName]["relevance"] = relevance;
             }
         }
         else
         {
-            request["request00" + to_string(i + 1)]["result"] = "false";
+            request[requestName]["result"] = "false";
         }
         answers["answers"].emplace_back(request);
     }
